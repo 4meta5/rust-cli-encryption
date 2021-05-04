@@ -20,30 +20,23 @@ struct Cli {
 
 fn main() {
     let args = Cli::from_args();
-
     let mc = new_magic_crypt!(&args.password, 256);
-
     let encrypted_filename = format!("{}{}", &args.path.to_str().unwrap(), ".enc");
+    let mut out_file;
+    let payload;
 
     if args.encrypt {
         let content = std::fs::read_to_string(&args.path).expect("could not read file");
-
-        let base64 = mc.encrypt_str_to_base64(content);
-
-        let mut output = File::create(encrypted_filename).expect("could not write file");
-
-        write!(output, "{}", base64).ok();
+        payload = mc.encrypt_str_to_base64(content);
+        out_file = File::create(encrypted_filename).expect("could not write file");
     } else if args.decrypt {
         let content = std::fs::read_to_string(encrypted_filename).expect("could not read file");
-
-        let decrypted = mc.decrypt_base64_to_string(content).unwrap();
-
+        payload = mc.decrypt_base64_to_string(content).unwrap();
         let decrypted_filename = format!("{}{}", &args.path.to_str().unwrap(), ".dec");
-
-        let mut output = File::create(decrypted_filename).expect("could not write file");
-
-        write!(output, "{}", decrypted).ok();
+        out_file = File::create(decrypted_filename).expect("could not write file");
     } else {
         panic!("you didn't pass an encrypt or decrypt flag!");
     }
+
+    write!(out_file, "{}", payload).ok();
 }
