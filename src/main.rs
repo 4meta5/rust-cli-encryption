@@ -40,9 +40,9 @@ fn main() {
 
         let decrypted = mc.decrypt_base64_to_string(content).unwrap();
 
-        let encrypted_filename = format!("{}{}", &args.path.to_str().unwrap(), ".dec");
+        let decrypted_filename = format!("{}{}", &args.path.to_str().unwrap(), ".dec");
 
-        let mut output = File::create(encrypted_filename).expect("could not write file");
+        let mut output = File::create(decrypted_filename).expect("could not write file");
 
         write!(output, "{}", decrypted).ok();
     } else {
