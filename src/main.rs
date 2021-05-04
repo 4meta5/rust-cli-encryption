@@ -3,7 +3,7 @@ extern crate magic_crypt;
 
 use magic_crypt::MagicCryptTrait;
 
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::Write;
 use structopt::StructOpt;
 
@@ -26,11 +26,11 @@ fn main() {
     let payload;
 
     if args.encrypt {
-        let content = std::fs::read_to_string(&args.path).expect("could not read file");
+        let content = fs::read_to_string(&args.path).expect("could not read file");
         payload = mc.encrypt_str_to_base64(content);
         out_file = File::create(encrypted_filename).expect("could not write file");
     } else if args.decrypt {
-        let content = std::fs::read_to_string(encrypted_filename).expect("could not read file");
+        let content = fs::read_to_string(encrypted_filename).expect("could not read file");
         payload = mc.decrypt_base64_to_string(content).unwrap();
         let decrypted_filename = format!("{}{}", &args.path.to_str().unwrap(), ".dec");
         out_file = File::create(decrypted_filename).expect("could not write file");
